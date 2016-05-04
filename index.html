@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+
+    <script src="scripts/angular.js"></script>
+    <script src="scripts/jquery-2.2.3.js"></script>
+    <script src="scripts/module.js"></script>
+    <script src="scripts/bootstrap.js"></script>
+</head>
+<body ng-app="EventCalendar">
+    <div ng-controller="EventController" ng-init="newEvent()" class="row">
+        <div class="col-xs-12 col-lg-10 col-lg-offset-1">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Events
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <button class="btn btn-info" ng-click="EventShow = true; Edit = false; newEvent()">
+                        <span class="glyphicon glyphicon-plus-sign"></span> Add Event
+                    </button>
+                    <button class="btn btn-info" ng-disabled="Events.length == 0" ng-click="(ViewEvents) ? ViewEvents = false : ViewEvents = true">
+                        <span class="glyphicon glyphicon-list"></span>
+                        <span ng-show="!ViewEvents"> Show Events</span>
+                        <span ng-show="ViewEvents"> Hide Events</span>
+                    </button>
+                </div>
+            </div>
+            <div class="panel panel-primary" ng-if="EventShow">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Event Details
+                    </div>
+                </div>
+                <div class="panel-body row"  >
+                    <form name="eventForm" ng-submit="saveEvent();">
+                        <div class="col-lg-3 form-group" ng-class="(eventForm.fN.$touched && eventForm.fN.$invalid) ? 'has-error' : (eventForm.fN.$valid) ? 'has-success' : ''">
+                            <label for="fN">First Name: </label>
+                            <input id="fN" name="fN" type="text" ng-model="Event.firstName" class="form-control" required/>
+                            <span ng-show="eventForm.fN.$touched && eventForm.fN.$invalid" class="has-error has-feedback text-danger"></span>
+                        </div>
+                        <div class="col-lg-3 form-group" ng-class="(eventForm.lN.$touched && eventForm.lN.$invalid) ? 'has-error' : (eventForm.lN.$valid) ? 'has-success' : ''">
+                            <label for="lN">Last Name: </label>
+                            <input id="lN" name="lN" type="text" ng-model="Event.lastName" class="form-control" required />
+                        </div>
+                        <div class="col-lg-2 form-group" ng-class="(eventForm.eN.$touched && eventForm.eN.$invalid) ? 'has-error' : (eventForm.eN.$valid) ? 'has-success' : ''">
+                            <label for="eN">Event Name: </label>
+                            <input id="eN" name="eN" type="text" ng-model="Event.Name" class="form-control" required />
+                        </div>
+                        <div class="col-lg-2 form-group" ng-class="(eventForm.d.$touched && eventForm.d.$invalid) ? 'has-error' : (eventForm.d.$valid) ? 'has-success' : ''">
+                            <label for="d">Date: </label>
+                            <input id="d" name="d" type="date" ng-model="Event.Date" class="form-control" required />
+                        </div>
+                        <div class="col-lg-2 form-group" ng-class="(eventForm.t.$touched && eventForm.t.$invalid) ? 'has-error' : (eventForm.t.$valid) ? 'has-success' : ''">
+                            <label for="t">Time:</label>
+                            <input id="t" name="t" type="time"  ng-model="Event.Date" class="form-control" required />
+                        </div>
+                        <div class="col-lg-4 form-group">
+                            <label for="a">Address: </label>
+                            <input id="a" type="text" ng-model="Event.Address" class="form-control" />
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label for="c">City: </label>
+                            <input id="c" type="text" ng-model="Event.City" class="form-control" />
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label for="s">State: </label>
+                            <input id="s" type="text" ng-model="Event.State" class="form-control" />
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label for="z">Zip: </label>
+                            <input id="z" type="text" ng-model="Event.Zip" class="form-control" />
+                        </div>
+                        <div class="col-lg-2 form-group">
+                            <label for="p">PIN: </label>
+                            <input id="p" type="text" ng-model="Event.PIN" class="form-control" />
+                        </div>
+                        <div ng-hide="Edit" class="col-lg-1 col-lg-offset-5">
+                            <button class="btn btn-warning form-control pull-right" style="margin-top:25px" type="submit"><span class="glyphicon glyphicon-calendar"></span> Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-success" ng-if="ViewEvents">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Current Events
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover table-condensed">
+                            <thead>
+                                <tr class="info">
+                                    <td class="col-lg-2">Title</td>
+                                    <td class="col-lg-2">Author</td>
+                                    <td class="col-lg-2">Date</td>
+                                    <td class="col-lg-2">Time</td>
+                                    <td class="col-lg-2">Details</td>
+                                    <td class="text-right col-lg-1">Like</td>
+                                    <td class="text-right col-lg-1">Dislike</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="e in Events" ng-dblclick="editEvent(e)">
+                                    <td><i class="glyphicon glyphicon-trash text-danger" ng-click="Delete(e)"></i> {{e.Name}}</td>
+                                    <td>{{e.firstName}} {{e.lastName}}</td>
+                                    <td>{{e.Date | date : 'MM/dd/yyyy'}}</td>
+                                    <td>{{e.Date | date: 'HH:mm a'}}</td>
+                                    <td>{{e.Address}}</td>
+                                    <td class="text-right"><button class="btn btn-success" ng-click="likeEvent(e)"><i class="glyphicon glyphicon-plus"></i></button><span class="badge"> {{e.VoteUp}}</span></td>
+                                    <td class="text-right"><button class="btn btn-danger" ng-click="dislikeEvent(e)"><i class="glyphicon glyphicon-minus"></i></button><span class="badge"> {{e.VoteDown}}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
