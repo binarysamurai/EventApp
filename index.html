@@ -3,13 +3,11 @@
 <head>
     <title></title>
     <meta charset="utf-8" />
-
-    <link href="Content/bootstrap.css" rel="stylesheet" />
-
-    <script src="scripts/angular.js"></script>
-    <script src="scripts/jquery-2.2.3.js"></script>
-    <script src="scripts/module.js"></script>
-    <script src="scripts/bootstrap.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="module.js"></script>
 </head>
 <body ng-app="EventCalendar">
     <div ng-controller="EventController" ng-init="newEvent()" class="row">
@@ -41,46 +39,49 @@
                     <form name="eventForm" ng-submit="saveEvent();">
                         <div class="col-lg-3 form-group" ng-class="(eventForm.fN.$touched && eventForm.fN.$invalid) ? 'has-error' : (eventForm.fN.$valid) ? 'has-success' : ''">
                             <label for="fN">First Name: </label>
-                            <input id="fN" name="fN" type="text" ng-model="Event.firstName" class="form-control" required/>
+                            <input id="fN" name="fN" type="text" ng-model="Event.firstName" class="form-control" maxlength="100" required/>
                             <span ng-show="eventForm.fN.$touched && eventForm.fN.$invalid" class="has-error has-feedback text-danger"></span>
                         </div>
                         <div class="col-lg-3 form-group" ng-class="(eventForm.lN.$touched && eventForm.lN.$invalid) ? 'has-error' : (eventForm.lN.$valid) ? 'has-success' : ''">
                             <label for="lN">Last Name: </label>
-                            <input id="lN" name="lN" type="text" ng-model="Event.lastName" class="form-control" required />
+                            <input id="lN" name="lN" type="text" ng-model="Event.lastName" class="form-control" maxlength="100" required />
                         </div>
                         <div class="col-lg-2 form-group" ng-class="(eventForm.eN.$touched && eventForm.eN.$invalid) ? 'has-error' : (eventForm.eN.$valid) ? 'has-success' : ''">
                             <label for="eN">Event Name: </label>
-                            <input id="eN" name="eN" type="text" ng-model="Event.Name" class="form-control" required />
+                            <input id="eN" name="eN" type="text" ng-model="Event.Name" class="form-control" maxlength="100" required />
                         </div>
                         <div class="col-lg-2 form-group" ng-class="(eventForm.d.$touched && eventForm.d.$invalid) ? 'has-error' : (eventForm.d.$valid) ? 'has-success' : ''">
                             <label for="d">Date: </label>
-                            <input id="d" name="d" type="date" ng-model="Event.Date" class="form-control" required />
+                            <input id="d" name="d" type="date" ng-model="Event.Date" class="form-control" min="{{MinDate}}" required />
                         </div>
                         <div class="col-lg-2 form-group" ng-class="(eventForm.t.$touched && eventForm.t.$invalid) ? 'has-error' : (eventForm.t.$valid) ? 'has-success' : ''">
                             <label for="t">Time:</label>
-                            <input id="t" name="t" type="time"  ng-model="Event.Date" class="form-control" required />
+                            <input id="t" name="t" type="time" ng-model="Event.Date" class="form-control" required />
                         </div>
                         <div class="col-lg-4 form-group">
                             <label for="a">Address: </label>
-                            <input id="a" type="text" ng-model="Event.Address" class="form-control" />
+                            <input id="a" type="text" ng-model="Event.Address" class="form-control" maxlength="100" />
                         </div>
                         <div class="col-lg-2 form-group">
                             <label for="c">City: </label>
-                            <input id="c" type="text" ng-model="Event.City" class="form-control" />
+                            <input id="c" type="text" ng-model="Event.City" class="form-control" maxlength="100" />
                         </div>
                         <div class="col-lg-2 form-group">
                             <label for="s">State: </label>
-                            <input id="s" type="text" ng-model="Event.State" class="form-control" />
+                            <select id="s" ng-options="S.Abbreviation as S.Name for S in States" ng-model="Event.State" class="form-control"></select>
                         </div>
                         <div class="col-lg-2 form-group">
                             <label for="z">Zip: </label>
-                            <input id="z" type="text" ng-model="Event.Zip" class="form-control" />
+                            <input id="z" type="number" ng-model="Event.Zip" class="form-control" pattern=".{0}|.{5,}" max="99999" maxlength="5" />
                         </div>
                         <div class="col-lg-2 form-group">
                             <label for="p">PIN: </label>
-                            <input id="p" type="text" ng-model="Event.PIN" class="form-control" />
+                            <input id="p" type="number" ng-model="Event.PIN" class="form-control" pattern=".{0}|.{4,}" max="999999" maxlength="6" />
                         </div>
                         <div ng-hide="Edit" class="col-lg-1 col-lg-offset-5">
+                            <button class="btn btn-warning form-control pull-right" style="margin-top:25px" type="submit"><span class="glyphicon glyphicon-calendar"></span> Submit</button>
+                        </div>
+                        <div ng-hide="!Edit" class="col-lg-1 col-lg-offset-5">
                             <button class="btn btn-warning form-control pull-right" style="margin-top:25px" type="submit"><span class="glyphicon glyphicon-calendar"></span> Submit</button>
                         </div>
                     </form>
@@ -108,7 +109,7 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="e in Events" ng-dblclick="editEvent(e)">
-                                    <td><i class="glyphicon glyphicon-trash text-danger" ng-click="Delete(e)"></i> {{e.Name}}</td>
+                                    <td><i class="btn glyphicon glyphicon-trash text-danger" ng-click="Delete(e)"></i> {{e.Name}}</td>
                                     <td>{{e.firstName}} {{e.lastName}}</td>
                                     <td>{{e.Date | date : 'MM/dd/yyyy'}}</td>
                                     <td>{{e.Date | date: 'HH:mm a'}}</td>
